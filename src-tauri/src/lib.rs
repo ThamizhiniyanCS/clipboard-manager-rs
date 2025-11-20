@@ -11,7 +11,6 @@ impl ClipboardHandler for Handler {
     fn on_clipboard_change(&mut self) -> CallbackResult {
         let data = read_clipboard(self.app_handle.clone());
 
-        println!("on_clipboard_change");
         self.app_handle.emit("clipboard-new", data).unwrap();
 
         CallbackResult::Next
@@ -47,8 +46,6 @@ pub fn run() {
     tauri::Builder::default()
         .setup(|app| {
             let app_handle = app.handle().clone();
-
-            // let state = app.state::<Mutex<AppState>>();
 
             thread::spawn(move || {
                 let handler = Handler { app_handle };
