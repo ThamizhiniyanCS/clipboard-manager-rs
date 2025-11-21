@@ -43,7 +43,7 @@ export default function ActiveClipboardItem() {
       <CardContent className="flex gap-2 pl-0 pr-4 py-2">
         <Tooltip>
           <TooltipTrigger className="w-full py-2 pl-4">
-            <p className="w-full line-clamp-3 text-left">{activeClipboardItem || "Clipboard is Empty"}</p>
+            <p className="w-full line-clamp-3 text-left break-all whitespace-normal">{activeClipboardItem || "Clipboard is Empty"}</p>
           </TooltipTrigger>
 
           <TooltipContent>

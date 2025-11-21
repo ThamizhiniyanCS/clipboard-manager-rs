@@ -1,6 +1,6 @@
 use clipboard_master::{CallbackResult, ClipboardHandler, Master};
 use std::{io, thread};
-use tauri::{AppHandle, Emitter};
+use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_clipboard_manager::ClipboardExt;
 
 struct Handler {
@@ -41,10 +41,46 @@ fn read_clipboard(app_handle: tauri::AppHandle) -> String {
     content
 }
 
+fn toggle_window(app_handle: &AppHandle) {
+    if let Some(window) = app_handle.get_webview_window("main") {
+        if window.is_visible().unwrap_or(false) {
+            let _ = window.hide();
+        } else {
+            let _ = window.show();
+            let _ = window.set_focus();
+        }
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .setup(|app| {
+            #[cfg(desktop)]
+            {
+                use tauri_plugin_global_shortcut::{
+                    Code, GlobalShortcutExt, Modifiers, Shortcut, ShortcutState,
+                };
+
+                let super_v_shortcut = Shortcut::new(Some(Modifiers::SUPER), Code::KeyV);
+                app.handle().plugin(
+                    tauri_plugin_global_shortcut::Builder::new()
+                        .with_handler(move |app_handle_ref, shortcut, event| {
+                            if shortcut == &super_v_shortcut {
+                                match event.state() {
+                                    ShortcutState::Pressed => {
+                                        toggle_window(app_handle_ref);
+                                    }
+                                    ShortcutState::Released => (),
+                                }
+                            }
+                        })
+                        .build(),
+                )?;
+
+                app.global_shortcut().register(super_v_shortcut)?;
+            }
+
             let app_handle = app.handle().clone();
 
             thread::spawn(move || {

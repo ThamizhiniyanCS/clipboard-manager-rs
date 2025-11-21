@@ -50,14 +50,14 @@ export default function HistoryScrollArea() {
     <ScrollArea className="w-full" style={{
       maxHeight: `calc(100vh - ${headerHeight + activeClipboardItemHeight + 70}px)`
     }}>
-      <div className="flex flex-col gap-2">
+      <div className="w-full flex flex-col gap-2">
         {
           visibleHistory.length > 0 ? visibleHistory.map((each, index) => (
             <Card key={index} className="w-full py-0 gap-0">
               <CardContent className="flex gap-2 px-0 pr-4 py-2">
                 <Tooltip>
                   <TooltipTrigger className="w-full cursor-pointer py-2 pl-4" onClick={() => copyItemToClipboard(each)}>
-                    <p className="line-clamp-3 text-left">{each}</p>
+                    <p className="line-clamp-3 text-left break-all whitespace-normal">{each}</p>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Click to copy to clipboard</p>
