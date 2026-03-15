@@ -8,7 +8,7 @@ export default function History() {
 
   return (
     <HistoryContextProvider>
-      <div className="w-full flex flex-col gap-4">
+      <div className="w-full h-full flex flex-col gap-4 overflow-hidden">
         <Header />
         <ActiveClipboardItem />
         <HistoryScrollArea />

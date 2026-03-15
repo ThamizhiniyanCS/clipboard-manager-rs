@@ -14,14 +14,15 @@ import {
 import { useEffect } from "react"
 import { listen } from "@tauri-apps/api/event"
 import { useHistoryContext } from "./context-provider"
+import type { ClipboardEntry } from "./context-provider"
 
 export default function HistoryScrollArea() {
   const {
     visibleHistory,
-    setHistory,
     headerHeight,
     activeClipboardItemHeight,
     filterQuery,
+    addClipboardEntry,
     updateActiveClipboardItem,
     copyItemToClipboard,
     deleteClipboardItem
@@ -30,14 +31,8 @@ export default function HistoryScrollArea() {
   useEffect(() => {
     updateActiveClipboardItem()
 
-    const unlistenPromise = listen<string>('clipboard-new', (event) => {
-      setHistory((prevState) => {
-        if (prevState.includes(event.payload)) return prevState
-
-        return [event.payload, ...prevState]
-      })
-
-      updateActiveClipboardItem()
+    const unlistenPromise = listen<ClipboardEntry>('clipboard-new', (event) => {
+      addClipboardEntry(event.payload)
     })
 
     return () => {
@@ -52,21 +47,38 @@ export default function HistoryScrollArea() {
     }}>
       <div className="w-full flex flex-col gap-2">
         {
-          visibleHistory.length > 0 ? visibleHistory.map((each, index) => (
-            <Card key={index} className="w-full py-0 gap-0">
+          visibleHistory.length > 0 ? visibleHistory.map((entry) => (
+            <Card key={entry.id} className="w-full py-0 gap-0">
               <CardContent className="flex gap-2 px-0 pr-4 py-2">
-                <Tooltip>
-                  <TooltipTrigger className="w-full cursor-pointer py-2 pl-4" onClick={() => copyItemToClipboard(each)}>
-                    <p className="line-clamp-3 text-left break-all whitespace-normal">{each}</p>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Click to copy to clipboard</p>
-                  </TooltipContent>
-                </Tooltip>
+                {entry.contentType === "image" ? (
+                  <Tooltip>
+                    <TooltipTrigger className="w-full cursor-pointer py-2 pl-4" onClick={() => copyItemToClipboard(entry)}>
+                      <div className="aspect-video w-full overflow-hidden rounded">
+                        <img
+                          src={entry.content}
+                          alt="Clipboard image"
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Click to copy to clipboard</p>
+                    </TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <Tooltip>
+                    <TooltipTrigger className="w-full cursor-pointer py-2 pl-4" onClick={() => copyItemToClipboard(entry)}>
+                      <p className="line-clamp-3 text-left break-all whitespace-normal">{entry.content}</p>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Click to copy to clipboard</p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button size="icon" className="cursor-pointer my-auto" variant="outline" onClick={() => deleteClipboardItem(each)}>
+                    <Button size="icon" className="cursor-pointer my-auto" variant="outline" onClick={() => deleteClipboardItem(entry.id)}>
                       <Trash2Icon />
                     </Button>
                   </TooltipTrigger>
@@ -91,4 +103,3 @@ export default function HistoryScrollArea() {
 
   )
 }
-

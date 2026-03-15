@@ -40,7 +40,7 @@ function App() {
         "--sidebar-width-icon": "2rem"
       } as React.CSSProperties}>
         <AppSidebar />
-        <SidebarInset className="p-4 overflow-y-hidden">
+        <SidebarInset className="p-4 h-screen overflow-hidden">
           <History />
         </SidebarInset>
       </SidebarProvider>

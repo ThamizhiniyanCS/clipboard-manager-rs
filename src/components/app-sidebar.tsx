@@ -7,7 +7,8 @@ import {
   useSidebar
 } from "@/components/ui/sidebar"
 import { ClipboardIcon } from "lucide-react"
-import { ModeToggle } from "./mode-toogle"
+import { ModeToggle } from "./toggles/mode-toggle"
+import AutostartToggle from "./toggles/autostart-toggle"
 
 export function AppSidebar() {
 
@@ -26,6 +27,7 @@ export function AppSidebar() {
         <SidebarGroup />
       </SidebarContent>
       <SidebarFooter className="px-0 py-4">
+        <AutostartToggle />
         <ModeToggle />
       </SidebarFooter>
     </Sidebar>

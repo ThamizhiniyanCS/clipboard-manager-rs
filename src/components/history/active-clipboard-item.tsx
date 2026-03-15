@@ -3,7 +3,7 @@ import {
   CardContent,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button";
-import { PinIcon } from "lucide-react";
+import { ImageIcon, PinIcon } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -43,7 +43,22 @@ export default function ActiveClipboardItem() {
       <CardContent className="flex gap-2 pl-0 pr-4 py-2">
         <Tooltip>
           <TooltipTrigger className="w-full py-2 pl-4">
-            <p className="w-full line-clamp-3 text-left break-all whitespace-normal">{activeClipboardItem || "Clipboard is Empty"}</p>
+            {activeClipboardItem ? (
+              activeClipboardItem.contentType === "image" ? (
+                <div className="flex items-center gap-2">
+                  <img
+                    src={activeClipboardItem.content}
+                    alt="Active clipboard image"
+                    className="max-h-20 max-w-full object-contain rounded"
+                  />
+                  <ImageIcon className="h-4 w-4 text-muted-foreground shrink-0" />
+                </div>
+              ) : (
+                <p className="w-full line-clamp-3 text-left break-all whitespace-normal">{activeClipboardItem.content}</p>
+              )
+            ) : (
+              <p className="w-full line-clamp-3 text-left break-all whitespace-normal text-muted-foreground">Clipboard is Empty</p>
+            )}
           </TooltipTrigger>
 
           <TooltipContent>
@@ -66,4 +81,3 @@ export default function ActiveClipboardItem() {
     </Card>
   )
 }
-
